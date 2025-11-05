@@ -22,5 +22,10 @@ echo "Working directory is $PBS_O_WORKDIR"
 # It is a good idea to always specify the version number 
 module load matlab/2024a
 
+
+# -------------Note--------------------------------------
+# stream options: 'msg' 
+# run "python3 batch_geo_nav.py" in ../Python_code/
+
 # Run your code
-matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'mtsat'); exit"
+matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'msg'); exit"
