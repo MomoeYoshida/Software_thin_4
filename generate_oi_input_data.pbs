@@ -23,4 +23,4 @@ echo "Working directory is $PBS_O_WORKDIR"
 module load matlab/2024a
 
 # Run your code
-
+matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'mtsat'); exit"
