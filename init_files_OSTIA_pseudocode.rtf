@@ -1,0 +1,42 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2865
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww13780\viewh23880\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 init_files_OSTIA(year, day, varargin):\
+\
+1. Initialisation.\
+	\'96 init_file_info.m\
+	\'96 init_par_info.m\
+	\'96 correct format of date\
+\
+2. Get the OSTIA data of that day / Read a NetCDF file.\
+	\'96 start_sst\
+	\'96 Create a land/ice mask and transpose it.\
+\
+3. Get the OSTIA data of 10 days before that day / Read a NetCDF file.\
+	\'96 earlier_sst\
+\
+4. Smooth earlier_sst by a factor of 9.\
+	\'96 sst\
+	\'96 transpose\
+\
+5. Calculate the SST variability / absolute SST difference between the SST field 10 days ago and that day.\
+	\'96 sst_variability=0.1*abs(earlier_sst-start_sst)\
+	\'96 transpose\
+\
+6. Initialise a baseline error estimate map?\
+	\'96 0.2\
+	\'96 error_analysis\
+	\'96 transpose\
+\
+7. Plot sst, sst_variability, error_analysis, ice_mask.\
+	\'96 smoothed SST of 10 days before\
+	\'96 absolute SST difference between the SST field 10 days ago and that day\
+	\'96 0.2s\
+	\'96 0=ocean, 1=ice, 2=land of that day\
+\
+8. Calculate a correlation map / Derive correlation lengths.\
+}
