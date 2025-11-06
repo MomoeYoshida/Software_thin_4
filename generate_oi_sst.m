@@ -4,6 +4,9 @@ function [return_flag]=generate_oi_sst(year,day,varargin);
 % and POES SST data.
 %
 
+% Add MS directory (and all its subfolders) to MATLAB path
+addpath(genpath(fullfile('..', 'MS')));
+
 message2(['*** Generating OI SST for Day ' num2str(day) ' Year ' num2str(year)])
 
 global file_info par_info return_flag
