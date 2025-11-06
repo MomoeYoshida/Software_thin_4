@@ -27,5 +27,15 @@ module load matlab/2024a
 # stream options: 'msg' 
 # run "python3 batch_geo_nav.py" in ../Python_code/
 
+# Define date
+year=2025
+day=002
+yesterday=$((day-1))
+
 # Run your code
-matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'msg'); exit"
+#matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'msg'); exit"
+#matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'jpss'); exit"
+#matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'goes'); exit"
+#matlab -nodisplay -nosplash -r "generate_oi_input_data(2025,011,'all'); exit"
+matlab -nodisplay -nosplash -r "try, init_files_OSTIA(${year},${yesterday}); init_all_biases(${year},${yesterday}); generate_oi_input_data(${year},${day},'all'); catch ME, disp(getReport(ME)); exit(1); end; exit"
+
