@@ -4,6 +4,7 @@ import subprocess
 import sys
 from netCDF4 import Dataset
 from datetime import datetime
+import glob
 
 DATA_DIR = "../Data"
 SCRIPT = "./geo_nav.py"
@@ -44,22 +45,26 @@ def main(start_date=None, end_date=None):
 		print(f"📅 Processing files between {start_date} and {end_date}")
 	else:
 		print("⚠️ No date range specified — processing all files")
-	for root, _, files in os.walk(DATA_DIR):
-		for f in files:
-			if not f.endswith(".nc"):
-				continue
-			# Extract date from filename (first 8 chars)
-			file_date = datetime.strptime(f[:8], "%Y%m%d").date()
-			# Skip files outside the range (if range specified)
+	for platform in os.listdir(DATA_DIR):
+		platform_dir = os.path.join(DATA_DIR, platform)
+		if not os.path.isdir(platform_dir):
+			continue	# skip non-folder entries
+
+		nc_files = glob.glob(os.path.join(platform_dir, "*.nc"))
+		for fpath in nc_files:
+			fname = os.path.basename(fpath)
+			file_date = datetime.strptime(fname[:8], "%Y%m%d").date()
+			# Skip files outside range
 			if start_date and end_date and not (start_date <= file_date <= end_date):
 				continue
-			path = os.path.join(root, f)
-			if has_latlon(path):
-				print(f"⏩ Skipping {path} (already has lat/lon)")
-				continue
-			process_file(path)
 
-	print("\n✅ All eligible files processed!")
+			if has_latlon(fpath):
+				print(f"⏩	Skipping {fpath} (already has lat/lon)")
+				continue
+
+			process_file(fpath)
+
+	print("\n✅	All eligible files processed!")
 
 if __name__ == "__main__":
 	# Date range to process is defined
