@@ -1,0 +1,62 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/download_podaac_data.log
+#PBS -N DownloadPODAACData
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=48:00:00
+#PBS -l select=1:ncpus=12:mem=64gb
+
+set -e # stop script if any error occurs
+
+# -------------------------------------------------------------------------
+# User settings
+# -------------------------------------------------------------------------
+
+# Date range (edit as needed)
+START_DATE="2025-01-11T00:00:00Z"
+END_DATE="2025-01-12T00:00:00Z"
+
+# List of datasets to download
+DATASETS=(
+"H09-AHI-L2P-ACSPO-v2.90"
+"MSG02-OSPO-L2P-v1.0"
+"MSG03-OSPO-L2P-v1.0"
+)
+OUTDIR="/home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Data"
+FOLDERS=(
+"mtsat"
+"mio"
+"msg"
+)
+
+CONTAINER="${OUTPUT_DIR}/podaac.sif"
+
+echo "======================================="
+echo " Starting PO.DAAC downloads via Apptainer"
+echo "======================================="
+
+# Loop through datasets and folder pairs
+for i in "${!DATASETS[@]}"; do
+    ds="${DATASETS[$i]}"
+    folder="${FOLDERS[$i]}"
+
+    echo "---------------------------------------"
+    echo " Dataset: $ds"
+    echo " Folder:  $folder"
+    echo "---------------------------------------"
+
+    apptainer exec "$CONTAINER" podaac-data-downloader \
+        -c "$ds" \
+        -d "$OUTDIR/$folder" \
+        --start-date "$START_DATE" \
+        --end-date "$END_DATE" \
+    echo "✅ Finished $ds"
+    echo
+done
+
+echo "======================================="
+echo "All downloads completed at $(date)"
+echo "======================================="
+
+

@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=48:00:00
+#PBS -l select=1:ncpus=1:mem=64gb
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/batch_geo_nav.log
+#PBS -N batch_geo_nav
+
+cd $PBS_O_WORKDIR
+shopt -s expand_aliases
+source /etc/profile.d/modules.sh
+echo "Job identifier is $PBS_JOBID"
+echo "Working directory is $PBS_O_WORKDIR"
+
+# Use netcdf.sif to run batch_geo_nav.py.
+apptainer exec netcdf.sif python3 batch_geo_nav.py
