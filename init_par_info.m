@@ -126,8 +126,8 @@ par_info.amsr_use_sses_stdev = 0;
 par_info.amsr_sses_stdev = 0.6;
 
 % 0 -> Day, 1 -> Night??
-%par_info.start_day_night = 0;		% Night <-- really? not Day?? see process_raw_goes_c.m
-par_info.start_day_night = 1; % Nightonly -> cause error: BiasDay and
+par_info.start_day_night = 0;		% Night <-- really? not Day?? see process_raw_goes_c.m
+%par_info.start_day_night = 1; % Nightonly -> cause error: BiasDay and
 %ref_sst have incompatible sizes in process_raw_geo_mex.c -> TNT: check
 %BiasDay
 par_info.end_day_night = 1;		% Day <-- really? not Night??
