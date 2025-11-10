@@ -14,4 +14,5 @@ echo "Job identifier is $PBS_JOBID"
 echo "Working directory is $PBS_O_WORKDIR"
 
 # Use netcdf.sif to run batch_geo_nav.py.
-apptainer exec netcdf.sif python3 batch_geo_nav.py
+#apptainer exec netcdf.sif python3 batch_geo_nav.py
+apptainer exec netcdf.sif python3 batch_geo_nav.py 20241231 20250401
