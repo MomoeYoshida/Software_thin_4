@@ -1,0 +1,55 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=100:00:00
+#PBS -l select=1:ncpus=1:mem=64gb
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/generate_oi_input_data_loop.log
+#PBS -N generate_oi_input_data_loop
+
+cd $PBS_O_WORKDIR
+shopt -s expand_aliases
+source /etc/profile.d/modules.sh
+echo "Job identifier is $PBS_JOBID"
+echo "Working directory is $PBS_O_WORKDIR"
+
+module load matlab/2024a
+
+start_date="20250101"
+end_date="20250331"
+
+echo "🚀 Starting OI Input Data Generation Loop"
+echo "From $start_date to $end_date"
+echo "Running on $(hostname)"
+date
+
+# --- Loop through each day ---
+current_date=$(date -d "${start_date}" +%Y%m%d)
+
+while [ "$current_date" -le "$end_date" ]; do
+    # Compute yesterday’s date (the GNU date command automatically subtracts one day, even across years)
+    yesterday=$(date -d "${current_date} -1 day" +%Y%m%d)
+
+    # Extract year/day-of-year for current and yesterday
+    year=$(date -d "${current_date}" +%Y)
+    day=$(date -d "${current_date}" +%j)
+    yyear=$(date -d "${yesterday}" +%Y)
+    yday=$(date -d "${yesterday}" +%j)
+
+    echo "-----------------------------------------------"
+    echo "🗓️  Processing Year=$year Day=$day (Yesterday: $yyear,$yday)"
+    date
+
+    # Run MATLAB for this day
+    matlab -nodisplay -nosplash -r "try, \
+        init_files_OSTIA(${yyear},${yday}); \
+        init_all_biases(${yyear},${yday}); \
+        generate_oi_input_data(${year},${day},'all'); \
+    catch ME, disp(getReport(ME)); exit(1); end; exit"
+
+    # Move to next day
+    current_date=$(date -d "${current_date} +1 day" +%Y%m%d)
+done
+
+echo "✅ All dates processed successfully!"
+date
