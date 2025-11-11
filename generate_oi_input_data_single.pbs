@@ -2,10 +2,10 @@
 #PBS -j oe
 #PBS -m ae
 #PBS -M momoe.yoshida@my.jcu.edu.au
-#PBS -l walltime=48:00:00
+#PBS -l walltime=08:00:00
 #PBS -l select=1:ncpus=1:mem=64gb
-#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/generate_oi_input_data_${year}_${day}.log
-#PBS -N generate_oi_input_data_${year}_${day}
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/tmp.log
+#PBS -N generate_oi_input_data_single
 
 cd $PBS_O_WORKDIR
 
@@ -21,6 +21,10 @@ echo "Working directory is $PBS_O_WORKDIR"
 # Load the container we want to use
 # It is a good idea to always specify the version number 
 module load matlab/2024a
+
+log_dir="/home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs"
+log_file="${log_dir}/generate_oi_input_data_${year}_${day}.log"
+exec >"$log_file" 2>&1
 
 echo "🚀 Running generate_oi_input_data for Year=${year}, Day=${day} (Yesterday=${yyear},${yday})"
 date

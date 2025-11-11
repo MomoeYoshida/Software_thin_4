@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: ./submit_generate_jobs.sh 20250111 20250331
+# Usage: ./submit_generate_oi_input_data_single_jobs.sh 20250111 20250331
 # Submits one PBS job per day in the range, using Julian day numbering (001–365/366)
 
 start_date="$1"
