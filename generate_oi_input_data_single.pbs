@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=48:00:00
+#PBS -l select=1:ncpus=1:mem=64gb
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/generate_oi_input_data_${year}_${day}.log
+#PBS -N generate_oi_input_data_${year}_${day}
+
+cd $PBS_O_WORKDIR
+
+# Add this to all of your scripts
+shopt -s expand_aliases
+source /etc/profile.d/modules.sh
+
+# Output some useful information about
+# the job we are running
+echo "Job identifier is $PBS_JOBID"
+echo "Working directory is $PBS_O_WORKDIR"
+
+# Load the container we want to use
+# It is a good idea to always specify the version number 
+module load matlab/2024a
+
+echo "🚀 Running generate_oi_input_data for Year=${year}, Day=${day} (Yesterday=${yyear},${yday})"
+date
+
+matlab -nodisplay -nosplash -r "try, \
+    init_files_OSTIA(${yyear},${yday}); \
+    init_all_biases(${yyear},${yday}); \
+    generate_oi_input_data(${year},${day},'all'); \
+catch ME, disp(getReport(ME)); exit(1); end; exit"
+
+echo "✅ Finished ${year}-${day} at $(date)"
