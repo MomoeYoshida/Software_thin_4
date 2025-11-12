@@ -145,6 +145,13 @@ else
    check_label='raw_';
 end
 
+gridcount2=zeros(spatial_resolution);
+sst2=NaN*ones(spatial_resolution);
+stdvals2=zeros(spatial_resolution);
+bias2=zeros(spatial_resolution);
+
+
+
 % Save data in "input_ssts" directory.
 
 for filetype=start_day_night:end_day_night    %  Just the day & night cloudflag=0 cases...
@@ -153,55 +160,111 @@ for filetype=start_day_night:end_day_night    %  Just the day & night cloudflag=
       case 0
 
 % Where no quality control has been done output datafiles are prefixed with "raw_"
-
-         sst       = sst_day;
-         gridcount = gridcount_day;
-         stdvals   = stdvals_day;
-         dumparray = dumparray_day;
-         bias      = bias_day;
-  
-         total_bad_clim  = total_bad_day_clim;   
-         total_bad_stdev = total_bad_day_stdev;   
+        % Momoe add same logic as geostationary ones (e.g.,
+        % process_raw_goes_c.m) to treat the error "NaN values cannot be converted to logicals" at sst(isnan(gridcount) | gridcount < 1) = NaN;.
+        % this error was likely due to gridcount is empty.
+        sst_size=size(sst_day);
+        if((sst_size(1)*sst_size(2))>1)
+            sst          = sst_day;
+            gridcount    = gridcount_day;
+            stdvals      = stdvals_day;
+            bias         = bias_day;
+        else % raw data files are absent
+            sst          = sst2;
+            gridcount    = gridcount2;
+            stdvals      = stdvals2;
+            bias         = bias2;
+        end
+        dumparray = dumparray_day;
+        total_bad_clim  = total_bad_day_clim;
+        total_bad_stdev = total_bad_day_stdev;
+ 
 
          clear sst_day gridcount_day stdvals_day dumparray_day bias_day
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     % 
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst gridcount ' ...
+     %      ' stdvals dumparray total_bad* bias'])
 
-       %Riley: Andy's bias fix
-       sst(gridcount < 1) = NaN;	
-						 stdvals(gridcount < 1) = NaN;
-       %End fix
+     % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_day ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
 
-         eval(['save ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst gridcount ' ...
-          ' stdvals dumparray total_bad* bias'])
+    % Momoe
+    sst(isnan(gridcount) | gridcount < 1) = NaN;
+    stdvals(isnan(gridcount) | gridcount < 1) = NaN;
+
+    eval(['save ' outname ' sst gridcount stdvals dumparray total_bad* bias'])
 
       case 1
 
-         sst       = sst_night;
-         gridcount = gridcount_night;
-         stdvals   = stdvals_night;   
-         dumparray = dumparray_night;
-         bias      = bias_night;
-  
-         total_bad_clim  = total_bad_night_clim;   
-         total_bad_stdev = total_bad_night_stdev;   
+        sst_size=size(sst_night);
+        if((sst_size(1)*sst_size(2))>1)
+            sst          = sst_night;
+            gridcount    = gridcount_night;
+            stdvals      = stdvals_night;
+            bias         = bias_night;
+        else % raw data files are absent
+            sst          = sst2;
+            gridcount    = gridcount2;
+            stdvals      = stdvals2;
+            bias         = bias2;
+        end  
+        dumparray = dumparray_night;
+        total_bad_clim  = total_bad_night_clim;   
+        total_bad_stdev = total_bad_night_stdev;   
 
          clear sst_night gridcount_night stdvals_night dumparray_night bias_night
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
-       %Riley: Andy's bias fix
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst gridcount ' ...
+     %      ' stdvals dumparray total_bad* bias'])
+
+     % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_night ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
+    
+    %Riley: Andy's bias fix
        sst(gridcount < 1) = NaN;	
 						 stdvals(gridcount < 1) = NaN;
        %End fix
 
-         eval(['save ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst gridcount ' ...
-          ' stdvals dumparray total_bad* bias'])
+    eval(['save ' outname ' sst gridcount stdvals dumparray total_bad* bias'])
 
       otherwise
 
@@ -310,53 +373,107 @@ for filetype=start_day_night:end_day_night    %  Just the day & night cloudflag=
 
 % Where no quality control has been done output datafiles are prefixed with "raw_"
 
-         sst       = sst_day;
-         gridcount = gridcount_day;
-         stdvals   = stdvals_day;
-         dumparray = dumparray_day;
-         bias      = bias_day;
-  
-         total_bad_clim  = total_bad_day_clim;   
-         total_bad_stdev = total_bad_day_stdev;   
+        sst_size=size(sst_day);
+        if((sst_size(1)*sst_size(2))>1)
+            sst          = sst_day;
+            gridcount    = gridcount_day;
+            stdvals      = stdvals_day;
+            bias         = bias_day;
+        else % raw data files are absent
+            sst          = sst2;
+            gridcount    = gridcount2;
+            stdvals      = stdvals2;
+            bias         = bias2;
+        end
+        dumparray = dumparray_day;
+        total_bad_clim  = total_bad_day_clim;   
+        total_bad_stdev = total_bad_day_stdev;   
 
          clear sst_day gridcount_day stdvals_day dumparray_day bias_day
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
-       %Riley: Andy's bias fix
-       sst(gridcount < 1) = NaN;	
-						 stdvals(gridcount < 1) = NaN;
-       %End fix
+         % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_day ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
 
-         eval(['save ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst gridcount ' ...
-          ' stdvals dumparray total_bad* bias'])
+    % Momoe
+    sst(isnan(gridcount) | gridcount < 1) = NaN;
+    stdvals(isnan(gridcount) | gridcount < 1) = NaN;
+
+    eval(['save ' outname ' sst gridcount stdvals dumparray total_bad* bias'])
+
+    
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst gridcount ' ...
+     %      ' stdvals dumparray total_bad* bias'])
 
       case 1
 
-         sst       = sst_night;
-         gridcount = gridcount_night;
-         stdvals   = stdvals_night;   
-         dumparray = dumparray_night;
-         bias      = bias_night;
-  
-         total_bad_clim  = total_bad_night_clim;   
-         total_bad_stdev = total_bad_night_stdev;   
+        sst_size=size(sst_night);
+        if((sst_size(1)*sst_size(2))>1)
+            sst          = sst_night;
+            gridcount    = gridcount_night;
+            stdvals      = stdvals_night;
+            bias         = bias_night;
+        else % raw data files are absent
+            sst          = sst2;
+            gridcount    = gridcount2;
+            stdvals      = stdvals2;
+            bias         = bias2;
+        end
+        dumparray = dumparray_night;
+        total_bad_clim  = total_bad_night_clim;   
+        total_bad_stdev = total_bad_night_stdev;   
 
          clear sst_night gridcount_night stdvals_night dumparray_night bias_night
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
-       %Riley: Andy's bias fix
+         % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_night ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
+    
+    %Riley: Andy's bias fix
        sst(gridcount < 1) = NaN;	
 						 stdvals(gridcount < 1) = NaN;
        %End fix
 
-         eval(['save ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst gridcount ' ...
-          ' stdvals dumparray total_bad* bias'])
+    eval(['save ' outname ' sst gridcount stdvals dumparray total_bad* bias'])
+
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst gridcount ' ...
+     %      ' stdvals dumparray total_bad* bias'])
 
       otherwise
 

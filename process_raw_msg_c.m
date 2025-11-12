@@ -175,17 +175,37 @@ for filetype=start_day_night:end_day_night    %  Determined from user selection 
   
          clear sst_day gridcount_day stdvals_day bias_day
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     % 
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label  datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst stdvals gridcount pixel_extent bias'])
 
-       %Riley: Andy's bias fix
-       sst(gridcount < 1) = NaN;	
-						 stdvals(gridcount < 1) = NaN;
-       %End fix
+     % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_day ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
+    
+    %Riley: Andy's bias fix
+    sst(gridcount < 1) = NaN;	
+    stdvals(gridcount < 1) = NaN;
+    %End fix
 
-         eval(['save ' dir_input_ssts check_label  datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst stdvals gridcount pixel_extent bias'])
+    eval(['save ' outname ' sst stdvals gridcount pixel_extent bias'])
 
       case 1
 
@@ -208,17 +228,37 @@ for filetype=start_day_night:end_day_night    %  Determined from user selection 
   
          clear sst_night gridcount_night stdvals_night bias_night
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     % 
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst stdvals gridcount pixel_extent bias'])
 
-       %Riley: Andy's bias fix
-       sst(gridcount < 1) = NaN;	
-						 stdvals(gridcount < 1) = NaN;
-       %End fix
+    % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_night ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
+    
+    %Riley: Andy's bias fix
+    sst(gridcount < 1) = NaN;	
+    stdvals(gridcount < 1) = NaN;
+    %End fix
 
-         eval(['save ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst stdvals gridcount pixel_extent bias'])
+    eval(['save ' outname ' sst stdvals gridcount pixel_extent bias'])     
 
       otherwise
 
@@ -342,17 +382,37 @@ for filetype=start_day_night:end_day_night    %  Determined from user selection 
   
          clear sst_day gridcount_day stdvals_day bias_day
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     % 
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_day ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst stdvals gridcount pixel_extent bias'])
 
-       %Riley: Andy's bias fix
-       sst(gridcount < 1) = NaN;	
-						 stdvals(gridcount < 1) = NaN;
-       %End fix
+     % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_day ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
+    
+    %Riley: Andy's bias fix
+    sst(gridcount < 1) = NaN;	
+    stdvals(gridcount < 1) = NaN;
+    %End fix
 
-         eval(['save ' dir_input_ssts check_label datalabel_day ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst stdvals gridcount pixel_extent bias'])
+    eval(['save ' outname ' sst stdvals gridcount pixel_extent bias'])
 
        case 1 % Nighttime
 
@@ -375,17 +435,37 @@ for filetype=start_day_night:end_day_night    %  Determined from user selection 
   
          clear sst_night gridcount_night stdvals_night bias_night
 
-	 message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+	 % message2(['*** Saving ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)])
+     % 
+     %   %Riley: Andy's bias fix
+     %   sst(gridcount < 1) = NaN;	
+		% 				 stdvals(gridcount < 1) = NaN;
+     %   %End fix
+     % 
+     %     eval(['save ' dir_input_ssts check_label datalabel_night ...
+     %        num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
+     %      ' sst stdvals gridcount pixel_extent bias'])
 
-       %Riley: Andy's bias fix
-       sst(gridcount < 1) = NaN;	
-						 stdvals(gridcount < 1) = NaN;
-       %End fix
+     % ----- Momoe: Add thinning info to output filename if active -----
+    if isfield(par_info, 'thinning') && par_info.thinning == 1
+        tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
+        tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
+    else
+        tr_str = '';
+    end
+    
+    outname = [dir_input_ssts check_label datalabel_night ...
+        tr_str num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3)];
+    
+    message2(['*** Saving ' outname])
+    
+    %Riley: Andy's bias fix
+    sst(gridcount < 1) = NaN;	
+    stdvals(gridcount < 1) = NaN;
+    %End fix
 
-         eval(['save ' dir_input_ssts check_label datalabel_night ...
-            num2str_pad_zeros(year, 4) '_' num2str_pad_zeros(day,3) ...
-          ' sst stdvals gridcount pixel_extent bias'])
+    eval(['save ' outname ' sst stdvals gridcount pixel_extent bias'])
 
       otherwise
 
