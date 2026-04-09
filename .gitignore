@@ -1,0 +1,5 @@
+*.mat
+*.asv
+*.mexa64
+*.log
+.DS_Store
