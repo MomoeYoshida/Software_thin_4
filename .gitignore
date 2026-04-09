@@ -2,4 +2,5 @@
 *.asv
 *.mexa64
 *.log
+*.sif
 .DS_Store
