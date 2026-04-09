@@ -1,11 +1,11 @@
 #!/bin/bash
 #PBS -j oe
 #PBS -m ae
-#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/download_podaac_data.log
+#PBS -o /gpfs01/v2/Q9157/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/download_podaac_data.log
 #PBS -N DownloadPODAACData
 #PBS -M momoe.yoshida@my.jcu.edu.au
 #PBS -l walltime=48:00:00
-#PBS -l select=1:ncpus=12:mem=64gb
+#PBS -l select=1:ncpus=2:mem=64gb
 
 set -e # stop script if any error occurs
 
@@ -14,28 +14,59 @@ set -e # stop script if any error occurs
 # -------------------------------------------------------------------------
 
 # Date range (edit as needed)
-START_DATE="2025-01-11T00:00:00Z"
-END_DATE="2025-01-12T00:00:00Z"
+START_DATE="2025-04-01T00:00:00Z"
+END_DATE="2025-05-17T00:00:00Z"
 
 # List of datasets to download
 DATASETS=(
 "H09-AHI-L2P-ACSPO-v2.90"
-"MSG02-OSPO-L2P-v1.0"
-"MSG03-OSPO-L2P-v1.0"
+"AVHRRF_MB-STAR-L2P-v2.80"
+"AVHRRF_MC-STAR-L2P-v2.80"
+"VIIRS_N20-STAR-L2P-v2.80"
+"N21-VIIRS-L2P-ACSPO-v2.80"
 )
-OUTDIR="/home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Data"
+#DATASETS=(
+#"G18-ABI-L2P-ACSPO-v2.90"
+#"ABI_G16-STAR-L2P-v2.70"
+#"H09-AHI-L2P-ACSPO-v2.90"
+#"MSG02-OSPO-L2P-v1.0"
+#"MSG03-OSPO-L2P-v1.0"
+#"AVHRRF_MB-STAR-L2P-v2.80"
+#"AVHRRF_MC-STAR-L2P-v2.80"
+#"VIIRS_N20-STAR-L2P-v2.80"
+#"N21-VIIRS-L2P-ACSPO-v2.80"
+#"VIIRS_NPP-STAR-L2P-v2.80"
+#)
+
+OUTDIR="/gpfs01/v2/Q9157/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Data"
 FOLDERS=(
 "mtsat"
-"mio"
-"msg"
+"sst_metop"
+"sst_metopc"
+"sst_jpss"
+"sst_jpss"
 )
+#FOLDERS=(
+#"goes"
+#"goes"
+#"mtsat"
+#"mio"
+#"msg"
+#"sst_metop"
+#"sst_metopc"
+#"sst_jpss"
+#"sst_jpss"
+#"sst_npp"
+#)
 
-CONTAINER="${OUTPUT_DIR}/podaac.sif"
+CONTAINER="${OUTDIR}/podaac.sif"
 
 echo "======================================="
 echo " Starting PO.DAAC downloads via Apptainer"
 echo "======================================="
 
+# Launch all downloads in parallel
+pids=()
 # Loop through datasets and folder pairs
 for i in "${!DATASETS[@]}"; do
     ds="${DATASETS[$i]}"
@@ -50,13 +81,36 @@ for i in "${!DATASETS[@]}"; do
         -c "$ds" \
         -d "$OUTDIR/$folder" \
         --start-date "$START_DATE" \
-        --end-date "$END_DATE" \
-    echo "✅ Finished $ds"
-    echo
+        --end-date "$END_DATE" &
+    pids+=($!)
+    echo "Started $ds (PID: ${pids[-1]})"
 done
 
-echo "======================================="
-echo "All downloads completed at $(date)"
-echo "======================================="
+echo "---------------------------------------"
+echo "All ${#pids[@]} downloads launched. Waiting for completion..."
+echo "---------------------------------------"
 
+# Wait for all background jobs
+failed=0
+for i in "${!pids[@]}"; do
+    if ! wait "${pids[$i]}"; then
+        echo "ERROR: Download failed for ${DATASETS[$i]}"
+        ((failed++)) || true
+    else
+        echo "Finished ${DATASETS[$i]}"
+        dir="$OUTDIR/${FOLDERS[$i]}"
+        chmod -R u=rwx,go=rx "$dir"
+        echo "Permissions updated: $dir"
+    fi
+done
 
+if [[ $failed -gt 0 ]]; then
+    echo "======================================="
+    echo "WARNING: $failed download(s) failed at $(date)"
+    echo "======================================="
+    exit 1
+fi
+
+echo "======================================="
+echo "All downloads completed successfully at $(date)"
+echo "======================================="

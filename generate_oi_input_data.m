@@ -39,8 +39,7 @@ dir_input_ssts           = file_info.dir_input_ssts;
 name_sst_analysis        = file_info.name_sst_analysis;
 name_error_analysis      = file_info.name_error_analysis;
 name_sst_variability     = file_info.name_sst_variability;
-
-
+%dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,9,10] %Momoe
 
 % Check processing direction to ensure the correct reference SST is used.
 % Normally this is set to one, and the reference day is the day previous
@@ -76,9 +75,28 @@ else
    sst_check=1; % default
 end
 
+% CREATE input_l3c_str (first part of obs_file; e.g., mtsat_) from the list (skip 001 ostia) 
+input_l3c_str = ''; % Momoe
+% FOR each number in the list (the list of numbers corresponding to input L3C data):
+%message2(['*** dataset_ids: ' dataset_ids])
+%for i=dataset_ids % Momoe
+%   % Momoe *******
+%   data_string=num2str_pad_zeros(i,3);
+%   field_name = ['name_dataset_' data_string];
+%   value = file_info.(field_name);
+%   % Extract first part before 'night_'
+%   parts = split(value, '_');
+%   prefix = parts{1};   % e.g. 'METOPB'
+%   input_l3c_str = [input_l3c_str prefix '_'];
+%   % Momoe *******
+%end
+% ANDY: any C codes I need to modify due to this change?
+
+message2(['*** DEBUG001 '])
+%message2(['*** input_l3c_str: ' input_l3c_str])
 
 % If quality control is to be performed, then load up reference data set.
-
+message2(['*** sst_check: ' sst_check])
 if(sst_check)
 
 % Load up required reference data files (usually from previous day, OSTIA), informing user as
@@ -86,16 +104,16 @@ if(sst_check)
 
    message2(['*** Loading up data from previous time step: ' yesterday])
 
-   eval(['load ' dir_analysis file_info.name_sst_analysis yesterday ' sst_analysis']);
-   message2(['*** Loading ' dir_analysis name_sst_analysis yesterday])
+   eval(['load ' dir_analysis file_info.name_sst_analysis input_l3c_str yesterday ' sst_analysis']); % Momoe
+   message2(['*** Loading ' dir_analysis name_sst_analysis input_l3c_str yesterday])
 
 
-   eval(['load ' dir_analysis file_info.name_error_analysis yesterday]);
-   message2(['*** Loading ' dir_analysis name_error_analysis yesterday]);
+   eval(['load ' dir_analysis file_info.name_error_analysis input_l3c_str yesterday]);
+   message2(['*** Loading ' dir_analysis name_error_analysis input_l3c_str yesterday]);
 
 
-   eval(['load ' dir_analysis file_info.name_sst_variability yesterday]);
-   message2(['*** Loading ' dir_analysis name_sst_variability yesterday]);
+   eval(['load ' dir_analysis file_info.name_sst_variability input_l3c_str yesterday]);
+   message2(['*** Loading ' dir_analysis name_sst_variability input_l3c_str yesterday]);
 
 
 % Modify daily SST variability for use in OI. 

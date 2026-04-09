@@ -126,7 +126,7 @@ correlation_map=max(correlation_map, correlation_min); % lower bound: 8.0
 correlation_map=double(correlation_map);
 
 % May as well use most recent OSTIA as the starting analysis...
-
+% Transpose to have (3600,7200)? ANDY
 sst_analysis=double(start_sst'); % so we want to save OSTIA of that day, right??
 % OSTIA 10 days before is used to calculate sst_variability and
 % correlation_map, correct??

@@ -18,7 +18,7 @@ file_info.name_logfile        = 'noaa_op_sst_';   % Name for logfile (date will 
 
 % Change the path name according to your system settings.
 %blended_sst_home = '/Users/momotalo/Documents/geo_polar_blended_sst/macOS_MacBookPro/blended_home'; % Local (MacBook Pro)
-blended_sst_home = '/home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home'; % HPC
+blended_sst_home = '/gpfs01/v2/Q9157/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home'; % HPC
 
 % Keep the sub-directory names as following (so that I don't have to modify
 % this code.
@@ -113,6 +113,13 @@ file_info.name_bias_correlation_maps = 'bias_correlation_maps_';
 % Also, all original NOAA satellites (16, 17, 18, 19) should be lower-case here
 %file_info.var_n_datasets = 19;
 file_info.var_n_datasets = 10; % nighttime only, CoralTemp
+%file_info.var_n_datasets = [1,2,3,4,5,6,7,8,10] % Momoe % e.g., [1,2,3,4,5,6,7,8,10] remove #009 mtsat_night % this type/shape change is dangerous because MEX is not robust to that, introducing a mismatch between MATLAB passes and what MEX assumes
+% Momoe *************************************************
+%file_info.dataset_ids = [1,2,3,4,5,6,7,8,9,10];
+%file_info.var_n_datasets = numel(file_info.dataset_ids);
+% ANDY: The change here causes the segfault?
+% Momoe *************************************************
+
 file_info.var_n_datasets_start = 2; % skip first one for bias-correction
 
 file_info.jpss_name = 'jpss';

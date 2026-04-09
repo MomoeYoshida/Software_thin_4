@@ -62,6 +62,6 @@ end
 
 % Save all biases to today's file
 
-eval(['save ' dir_analysis name_sst_biases today ' *bias'])
+eval(['save ' dir_analysis name_sst_biases today ' *bias']) % sst_biases_yyyy_jjj.mat: save all variables whose names end with bias
 
 

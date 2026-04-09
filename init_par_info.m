@@ -181,7 +181,7 @@ par_info.bias_analysis_max=5.0;			%  +/- 3 degK seems about right.  5 K seems cr
 
 par_info.min_geo_obs_per_cell=5;
 par_info.min_avhrr_obs_per_cell=5;	     %  Also used for AMSR - always likely to be the case...
-par_info.thinning = 1; % 0/1, 1=enable random thinning
+par_info.thinning = 0; % 0/1, OFF/ON, 1=enable random thinning
 par_info.thinning_ratio = 0.5;  % keep 50% of L2P samples
 par_info.seed_base = 1000; % If you want a different random realization, simply change (e.g. 2000, 3000)
 par_info.spatial_resolution=[3600,7200];

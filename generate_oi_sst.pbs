@@ -4,7 +4,7 @@
 #PBS -M momoe.yoshida@my.jcu.edu.au
 #PBS -l walltime=48:00:00
 #PBS -l select=1:ncpus=1:mem=64gb
-#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/generate_oi_sst.log
+#PBS -o /gpfs01/v2/Q9157/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/generate_oi_sst.log
 #PBS -N generate_oi_sst
 
 cd $PBS_O_WORKDIR
@@ -13,7 +13,28 @@ shopt -s expand_aliases
 source /etc/profile.d/modules.sh
 echo "Job identifier is $PBS_JOBID"
 echo "Working directory is $PBS_O_WORKDIR"
+echo "Start time: $(date)"
  
 module load matlab/2024a
 
-matlab -nodisplay -nosplash -r "generate_oi_sst(2025,011); exit"
+#matlab -nodisplay -nosplash -r "generate_oi_sst(2025,011); exit"
+#matlab -nodisplay -nosplash -r "generate_oi_sst(2025,2); exit"
+
+# Debug for MEX files.
+matlab -nodisplay -nosplash -r "dbmex on; generate_oi_sst(2025,2); exit;"
+#matlab -nodisplay -nosplash -r "dbmex on; diary('mex_debug.log'); generate_oi_sst(2025,2); diary off; exit;"
+#matlab -Dgdb -nodisplay -nojvm -r "dbmex on; generate_oi_sst(2025,2); exit"
+#matlab -Dgdb -nodisplay -nosplash -r "dbmex on; generate_oi_sst(2025,2); exit"
+
+# Ensure MATLAB prints the full error message before exiting.
+#matlab -nodisplay -nosplash -r "try, dbmex on; generate_oi_sst(2025,2); catch ME, disp(getReport(ME)); end; exit;"
+
+#matlab -nodisplay -nosplash -r "dbmex on; diary('mex_debug.log'); try, generate_oi_sst(2025,2); catch ME, disp(getReport(ME)); end; diary off; exit;"
+
+#(gdb) quit
+#matlab -Dgdb -nodisplay -nosplash -r "dbmex on; diary('mex_debug.log'); try, generate_oi_sst(2025,2); catch ME, disp(getReport(ME)); end; diary off; exit;"
+
+# Run MATLAB inside gdb for MEX debugging...does not work in a pbs job
+#gdb --args matlab -nodisplay -nosplash -r "dbmex on; diary('mex_debug.log'); try, generate_oi_sst(2025,2); catch ME, disp(getReport(ME)); end; diary off; exit;"
+
+echo "End time: $(date)"

@@ -29,7 +29,9 @@ exec >"$log_file" 2>&1
 echo "🚀 Running generate_oi_input_data for Year=${year}, Day=${day} (Yesterday=${yyear},${yday})"
 date
 
+# Note: modify init_par_info.m (e.g., thinning switch) if needed
 matlab -nodisplay -nosplash -r "try, \
+    clear mex; \
     init_files_OSTIA(${yyear},${yday}); \
     init_all_biases(${yyear},${yday}); \
     generate_oi_input_data(${year},${day},'all'); \

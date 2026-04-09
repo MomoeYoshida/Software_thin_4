@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=02:00:00
+#PBS -l select=1:ncpus=1:mem=64gb
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/tmp.log
+#PBS -N extract_night_gridcount
+
+cd $PBS_O_WORKDIR
+shopt -s expand_aliases
+source /etc/profile.d/modules.sh
+echo "Job identifier is $PBS_JOBID"
+echo "Working directory is $PBS_O_WORKDIR" 
+module load matlab/2024a
+
+log_dir="/home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs"
+log_file="${log_dir}/extract_night_gridcount_${year}_${day}.log"
+exec >"$log_file" 2>&1
+
+echo "🚀 Running gextract_night_gridcount for Year=${year}, Day=${day}"
+date
+
+matlab -nodisplay -nosplash -r "try, extract_night_gridcount(${year},${day}); catch ME, disp(getReport(ME)); end; exit"
+
+echo "✅ Finished ${year}-${day} at $(date)"

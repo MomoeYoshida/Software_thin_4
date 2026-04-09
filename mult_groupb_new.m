@@ -31,7 +31,8 @@ if (length(sc)==1),
 end;
 
 % We're requesting a decomposition, will need to break down matrices
-
+% Below are our case. break domain into overlapping tiles > solve each tile
+% separately > stitch results back together
 % Get parameter positions
 i_nf = 1;
 num_fields = eval(['varargin{' num2str(i_nf) '}(1)']);
@@ -87,7 +88,7 @@ for i=1:nargout,
   eval(['cout' int2str(i) ' = zeros(sizr*numr,sizc*numc);']);
 end;
 
-% Loop over problem
+% Loop over problem, run OI per tile
 for r=1:numr, for c=1:numc,
 disp([r c])
   comstr = '[ r1';

@@ -1,0 +1,36 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -N make_op_sst
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=04:00:00
+#PBS -l select=1:ncpus=2:mem=64gb
+
+cd $PBS_O_WORKDIR
+
+shopt -s expand_aliases
+source /etc/profile.d/modules.sh
+
+echo "Job identifier is $PBS_JOBID"
+echo "Working directory is $PBS_O_WORKDIR"
+echo "Start time: $(date)"
+
+module purge
+module load matlab/2024a
+module load gcc/10.5.0
+
+echo "tar_date = $tar_date"
+
+echo "YEAR=$YEAR DOY=$DOY"
+
+matlab -nodisplay -nosplash <<EOF
+clear mex
+dbstop if error
+dbmex on
+
+make_op_sst($YEAR,$DOY,'all')
+
+exit
+EOF
+
+echo "End time: $(date)"

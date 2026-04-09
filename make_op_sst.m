@@ -11,7 +11,7 @@ init_file_info;
 % Create a logfile if so specified in init_file_info (ie if file_info.logfile_required is non-zero.)
 % This logfile is used for informational messages.
 
-create_logfile(year, day, 'blend');
+create_logfile(year, day, 'blend'); % ../Analysis/noaa_op_sst_
 % 
 
 % Check processing direction to ensure the correct reference SST is used.
@@ -38,7 +38,7 @@ update_all_biases(year, day, direction);
 
 % Generate OI based on input datasets.
 
-% generate_oi_sst(year, day, direction);
+generate_oi_sst(year, day, direction);
 
 % Close logfile.
 

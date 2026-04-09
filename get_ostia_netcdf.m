@@ -46,8 +46,8 @@ disp(['*** Opening ' netcdf_file])
 
 ncid = netcdf.open(netcdf_file, 'NC_NOWRITE')
 
-sst  = netcdf.getVar(ncid, 3);			%  Variable 3 is analysed_sst (actually in Celsius*100)
-sf   = netcdf.getAtt(ncid, 3, 'scale_factor');	%  Should be 0.01
+sst  = netcdf.getVar(ncid, 3);			%  Variable 3 is analysed_sst (actually in Celsius*100-ha?? not in Kelvin? ANDY)
+sf   = netcdf.getAtt(ncid, 3, 'scale_factor');	%  Should be 0.01... not None?? ANDY
 
 %  Convert to floating point and transpose
 

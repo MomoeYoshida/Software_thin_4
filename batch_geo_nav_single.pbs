@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -l walltime=72:00:00
+#PBS -l select=1:ncpus=1:mem=64gb
+#PBS -o /gpfs01/v2/Q9157/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/tmp.log
+#PBS -N batch_geo_nav_single
+
+cd $PBS_O_WORKDIR
+shopt -s expand_aliases
+source /etc/profile.d/modules.sh
+echo "Job identifier is $PBS_JOBID"
+echo "Working directory is $PBS_O_WORKDIR"
+
+log_dir="/gpfs01/v2/Q9157/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs"
+log_file="${log_dir}/batch_geo_nav_${tar_date}.log"
+exec >"$log_file" 2>&1
+
+echo "🚀 Running  batch_geo_nav for ${tar_date}"
+date 
+
+apptainer exec netcdf.sif python3 batch_geo_nav_single.py ${tar_date} 
+echo "✅ Finished  batch_geo_nav for ${tar_date}"
+
+

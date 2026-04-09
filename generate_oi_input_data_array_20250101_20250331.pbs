@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -j oe
+#PBS -m ae
+#PBS -M momoe.yoshida@my.jcu.edu.au
+#PBS -N generate_oi_input_data_array
+#PBS -l select=1:ncpus=1:mem=64gb
+#PBS -l walltime=04:00:00
+#PBS -q short
+#PBS -J 1-90
+#PBS -o /home/heronlab/momoe/geo_polar_blended_sst/Linux_JCUHPC/blended_home/Logs/generate_oi_input_data_${PBS_ARRAY_INDEX}.log
+
+cd $PBS_O_WORKDIR
+module load matlab/2024a
+
+# --- DATE RANGE DEFINED HERE ---
+start_date="2025-01-01"
+end_date="2025-03-31"
+
+# --- Compute current and yesterday date from array index ---
+read YEAR DAY YYEAR YDAY <<< $(python3 - <<'EOF'
+import datetime, os
+start = datetime.date.fromisoformat(os.environ["start_date"])
+offset = int(os.environ["PBS_ARRAY_INDEX"]) - 1
+current = start + datetime.timedelta(days=offset)
+yesterday = current - datetime.timedelta(days=1)
+print(f"{current.year} {current.timetuple().tm_yday:03d} {yesterday.year} {yesterday.timetuple().tm_yday:03d}")
+EOF
+)
+
+echo "🚀 Starting job for Year=${YEAR}, Day=${DAY} (yesterday: ${YYEAR},${YDAY})"
+date
+
+matlab -nodisplay -nosplash -r "try, \
+    init_files_OSTIA(${YYEAR},${YDAY}); \
+    init_all_biases(${YYEAR},${YDAY}); \
+    generate_oi_input_data(${YEAR},${DAY},'all'); \
+catch ME, disp(getReport(ME)); exit(1); end; exit"
+
+echo "✅ Finished Year=${YEAR}, Day=${DAY} at $(date)"

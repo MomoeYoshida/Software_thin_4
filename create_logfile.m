@@ -6,8 +6,8 @@ global logfile_fid write_logfile
 init_file_info
 init_par_info
 
-logfile_required=file_info.logfile_required;
-name_logfile    =file_info.name_logfile;
+logfile_required=file_info.logfile_required; % 1 if required
+name_logfile    =file_info.name_logfile; % noaa_op_sst_
 dir_analysis    =file_info.dir_analysis;
 
 % Create logfile for informational messages.

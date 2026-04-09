@@ -16,7 +16,7 @@ echo "Working directory is $PBS_O_WORKDIR"
 module load matlab/2024a
 
 start_date="20250101"
-end_date="20250331"
+end_date="20250104"
 
 echo "🚀 Starting OI Input Data Generation Loop"
 echo "From $start_date to $end_date"

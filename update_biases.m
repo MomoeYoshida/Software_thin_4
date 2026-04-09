@@ -43,7 +43,7 @@ init_file_info;
 init_par_info;
 
 spatial_resolution = par_info.spatial_resolution;
-cells_per_degree= par_info.cells_per_degree;
+cells_per_degree= par_info.cells_per_degree; % 1/20=0.05º
 
 % Use global file_info structure as defined by init_file_info.m to 
 % determine information about directories and filename.
@@ -56,12 +56,12 @@ name_sst_analysis        = file_info.name_sst_analysis;
 name_ice_mask            = file_info.name_ice_mask;
 name_land_mask           = file_info.name_land_mask;
 
-eval(['load  ' dir_analysis name_sst_biases yesterday ])
+eval(['load  ' dir_analysis name_sst_biases yesterday ]) % used for eval(['old_bias=' data_label 'bias;'])
 
 % Now bias-correct w.r.t. OSTIA (not analysis) to alleviate drift problem
   
 disp(['loading ostia ice land']) %RILEY
-eval(['load  ' dir_analysis 'ostia_' tenth_or_twentieth today])
+eval(['load  ' dir_analysis 'ostia_' tenth_or_twentieth today]) %load all variables stored inside this .mat file (may include "sst" used below)
 sst_analysis = sst;
 eval(['load  ' dir_analysis name_ice_mask today ' ice_mask'])
 eval(['load  ' dir_ancillary name_land_mask  ' land_mask'])
@@ -99,8 +99,9 @@ if (fid>0)
 
    old_bias(land)=NaN;
    old_bias(ice)=NaN;
-
+   % OSTIA - input sst
    obs_bias=sst_analysis-sst;  
+   % Maturi et al. 2017 p.5 Bias corrections.
    wt_new_bias=weighted_average(old_bias, obs_bias, ...
                                 bias_weighting_factor(1), bias_weighting_factor(2), bad_val);
    new_bias=smooth_analysis(wt_new_bias,bias_smoothing_factor);
