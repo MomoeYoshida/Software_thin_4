@@ -1,5 +1,10 @@
 #!/bin/bash
-
+# ==============================================================================
+# Name: submit_run_make_op_sst_pbs_chain.sh
+# Description: Submit run_make_op_sst.pbs for days in order from start_date to end_date.
+# Author: Momoe Yoshida
+# Usage example: submit_run_make_op_sst_pbs_chain.sh 20250111 20250113 
+# ==============================================================================
 start_date="$1"
 end_date="$2"
 
