@@ -24,6 +24,7 @@ function [return_flag]=generate_oi_sst(year,day,varargin);
 %           Ch2:
 %           Ch3:
 %           Ch4:
+%           Oth: Others
 %     [PERSON]:
 %           ANDY:
 %           SCOTT:
@@ -32,6 +33,10 @@ function [return_flag]=generate_oi_sst(year,day,varargin);
 %           Q: Question
 %           HYP: My hypothesis/guess
 %           KEY: Important code logic
+%           IDEA: New idea
+%           TODO: Action needed
+%     Example to search: /\[P1\].*\[ANDY\]
+%                        /\[P1\].*\[ME\]\[Q\] 
 % 
 % History: 
 %     Original version by Andy Harris 
@@ -53,7 +58,7 @@ return_flag=1;
 init_par_info;
 init_file_info;
 
-% 0/1 switch?
+% [P3][Ch1][ANDY][Q]: 0/1 switch?
 start_day_night = par_info.start_day_night;
 end_day_night = par_info.end_day_night;
 
@@ -64,7 +69,7 @@ min_val=par_info.sst_analysis_min; %-2.0
 
 bad_val=par_info.bad_val; %-999.
 max_obs_deviation=par_info.max_obs_deviation; %3.0
-correlation_min=par_info.correlation_min; %8.0, caution: why unused variable is assigned? ANDY
+correlation_min=par_info.correlation_min; %8.0
 correlation_max=par_info.correlation_max; %32.0
 correlation_scaling=par_info.correlation_scaling; %0.4
 
@@ -111,6 +116,7 @@ name_oi_scales           = file_info.name_oi_scales;
 name_coastwatch_file     = file_info.name_coastwatch_file;
 
 n_datasets               = file_info.var_n_datasets; % 10: nighttime only for CoralTemp
+% [P2][Ch2][ME][Q]: What if I reduce file_info.var_n_datasets from 10?
 %dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
 
 % Check processing direction to ensure the correct reference SST is used.
@@ -167,14 +173,16 @@ message2(['*** Loading ' dir_analysis name_sst_analysis input_l3c_str yesterday]
 eval(['load ' dir_analysis file_info.name_sst_variability input_l3c_str yesterday ' sst_variability']);
 message2(['*** Loading ' dir_analysis name_sst_variability input_l3c_str yesterday]);
 
-eval(['load ' dir_analysis file_info.name_correlation_map input_l3c_str yesterday ' correlation_map']);
-message2(['*** Loading ' dir_analysis name_correlation_map input_l3c_str yesterday ]);
-% obs_correlation_map of yesterday used anywhere in this code? I don't think so>ANDY?
+%eval(['load ' dir_analysis file_info.name_correlation_map input_l3c_str yesterday ' correlation_map']);
+%message2(['*** Loading ' dir_analysis name_correlation_map input_l3c_str yesterday ]);
+% [P3][Oth][ANDY][Q]: obs_correlation_map of yesterday used anywhere in this code? 
+% [P3][Oth][ANDY][HYP]: I don't think so, comment out for now.
 %eval(['load ' dir_analysis file_info.name_obs_correlation_map yesterday ' obs_correlation_map']);
 %message2(['*** Loading ' dir_analysis name_obs_correlation_map yesterday ]);
 
+% [P1][Ch1][ME][Q]: How are ice_mask and land_mask used in this code?
 eval(['load ' dir_analysis file_info.name_ice_mask today ' ice_mask']);
-message2(['*** Loading ' dir_analysis name_ice_mask today]); % why "today" for the ice_mask??
+message2(['*** Loading ' dir_analysis name_ice_mask today]); 
 
 message2(['*** Loading Landmask'])
 eval(['load ' dir_ancillary file_info.name_land_mask ' land_mask ']);
@@ -199,7 +207,7 @@ land_or_ice=find(ice_mask>0);
 % sst_variability_min    = minimum value allowed. 
 % sst_variability_max    = maximum value allowed.
 
-% ANDY: why sst_variability_scaling=0.5?
+% [P1][Ch1][ANDY][Q]: Why sst_variability_scaling=0.5?
 sst_variability=sst_variability_scaling*sst_variability; % this sst_variability is what we loaded in line 114 (from the previous day's analysis)
 sst_variability=min(sst_variability, sst_variability_max); % limit sst_variability to sst_variability_max
 sst_variability=max(sst_variability, sst_variability_min); % ensure sst_variability to sst_variability_min at least
@@ -218,7 +226,6 @@ cov_list='';
 % Initialize
 full_obs=zeros(spatial_resolution); %[3600,7200]
 
-% TNT
 % Momoe: if thinning is active.
    if isfield(par_info, 'thinning') && par_info.thinning == 1
         tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
@@ -232,10 +239,13 @@ full_obs=zeros(spatial_resolution); %[3600,7200]
 % n_datasets: from 10 > 9(remove jpss_night_c0) > 8(remove mtsat_night) > 7-4(no affect for GBR) > 3(remove METOPC_night_c0) > 2(remove METOPB_night_c0; max thinning)? & Add message2(['*** Thinning name_dataset-particular input data thinned'])?
 % What if we want to only remove METOPB (#003) but keep using the others?
 % • how many good/ok L3C SST values available in each pixel and which input satellite data?
-% ANDY: OSTIA is used as an input data??? 1/4 degree?  only every 5th row and column is filled with real values from sst. The other entries remain whatever they were initialized with (NaN)?
+
+% [P1][Ch1][ANDY][Q]: OSTIA is used as an input data? 
+% [P1][Ch1][ANDY][HYP]: 1/4 degree,  only every 5th row and column is filled with real values from sst. The other entries remain whatever they were initialized with (NaN).
 
 % FOR each number in the list (the list of numbers corresponding to input L3C data):
 %for i=dataset_ids % Momoe
+
 for i=1:n_datasets
     % n_datasets control the # of input satellite data
    % For each input satellite data.
