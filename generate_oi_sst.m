@@ -9,7 +9,36 @@ function [return_flag]=generate_oi_sst(year,day,varargin);
 % use varargin to allow flexibility
 %
 % e.g., generate_oi_sst(2025,2), julian day
+
+% ================================================================================================
+% Name: generate_oi_sst.m
 %
+% Commenting system standard format (consistent, scalable and searchable):
+%     [PRIORITY][TOPIC][PERSON][TYPE]: message
+%     [PRIORITY]:
+%           P1: High (urgent+important)
+%           P2: Medium
+%           P3: Low
+%     [TOPIC]:
+%           Ch1:
+%           Ch2:
+%           Ch3:
+%           Ch4:
+%     [PERSON]:
+%           ANDY:
+%           SCOTT:
+%           ME (MOMOE):
+%     [TYPE]:
+%           Q: Question
+%           HYP: My hypothesis/guess
+%           KEY: Important code logic
+% 
+% History: 
+%     Original version by Andy Harris 
+%     Modified version here by Momoe Yoshida
+%
+% ================================================================================================
+
 
 % Add MS directory (and all its subfolders) to MATLAB path
 addpath(genpath(fullfile('..', 'MS')));
