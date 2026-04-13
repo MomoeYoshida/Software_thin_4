@@ -235,10 +235,10 @@ full_obs=zeros(spatial_resolution); %[3600,7200]
    end
 
 % Loop over each input satellite data, including both day and night.
-% TNT Ch.2: I may adjust around here to thin data!
+% [P1][Ch2][ANDY/SCOTT][KEY]: I may adjust around here to thin data!
 % n_datasets: from 10 > 9(remove jpss_night_c0) > 8(remove mtsat_night) > 7-4(no affect for GBR) > 3(remove METOPC_night_c0) > 2(remove METOPB_night_c0; max thinning)? & Add message2(['*** Thinning name_dataset-particular input data thinned'])?
-% What if we want to only remove METOPB (#003) but keep using the others?
-% • how many good/ok L3C SST values available in each pixel and which input satellite data?
+% What if we want to only remove METOPB (#003) but keep using the others? >  lead to the idea of using dataset_ids
+% • how many good/ok L3C SST values available in each pixel and which input satellite data-map?
 
 % [P1][Ch1][ANDY][Q]: OSTIA is used as an input data? 
 % [P1][Ch1][ANDY][HYP]: 1/4 degree,  only every 5th row and column is filled with real values from sst. The other entries remain whatever they were initialized with (NaN).
@@ -266,7 +266,7 @@ for i=1:n_datasets
    fid=fopen(full_obs_filename);
    if(fid>0)   
       fclose(fid);
-      eval(['load ' dir_input_ssts obs_file date_string ' sst stdvals gridcount bias']);
+      eval(['load ' dir_input_ssts obs_file date_string ' sst stdvals gridcount bias']); % stdvals: how spread out l2p sst values are from the mean (l3p sst value)
       message2(['*** Loading ' dir_input_ssts obs_file date_string]);
    end
 
@@ -285,7 +285,8 @@ for i=1:n_datasets
    % Set minimum value for standard deviation.
 
    % Set minimum value (0.15) for standard deviation.
-   % ANDY: Why 0.15?
+   % [P1][Ch1/2][ANDY][Q]: Why 0.15?
+   % [P1][Ch2][ANDY/SCOTT/ME][Q]: How are these constant/threshold values decided/calculated? Will it be worth analysing how changing these values or not setting the thresholds influences the final output?
    too_low=find(stdvals<0.15);
    stdvals(too_low)=0.15;
    clear too_low % remove the variable named too_low from the workspace
@@ -295,7 +296,7 @@ for i=1:n_datasets
       only_two=find(gridcount==2);
       stdvals(only_one)=0.5;
       stdvals(only_two)=0.4;
-      % ANDY: Why 0.5 and 0.4? What's this code block for?
+      % [P3][Oth][ANDY][Q]: Why 0.5 and 0.4? What's this code block for?
       clear only_one only_two
    end
    clear gridcount only_one only_two
@@ -312,7 +313,7 @@ for i=1:n_datasets
    % Update bias correction (Maturi et al. 2017–Fig1.process flowchart)
    obs=sst+bias-sst_analysis; % KEY
    % obs will be NaN if sst is NaN regardless of the values of sst_analysis
-   % ANDY: sst and sst_analysis don't match in unit and scale???? in �C??
+   % [P1][Ch2][ME][KEY]: Unit of obs,sst,bias,sst_analysis is �C.
    % obs = L3 SST + L3 Bias - L4 SST (reference: previous day's
    % analysis)
    % how is the L3 Bias calculated (and SST)? (bias correction value) -> cmax (matlab executable)
@@ -325,7 +326,8 @@ for i=1:n_datasets
    % sst_analysis: the background/reference/previous day's (yesterday's)
    % field/sst
 
-   too_big=find(abs(obs)>max_obs_deviation); % >3.0, ANDY: large real changes may be rejected? cab introduce correlated biases?
+   % [P1][Ch2][ANDY/SCOTT/ME][Q]: max_obs_deviation threshold may reject large real changes in SST from yesterday and introduce systematic error?
+   too_big=find(abs(obs)>max_obs_deviation); % >3.0  
    obs(too_big)=NaN;
    obs(land)=NaN;
    cov=stdvals.*stdvals;  % KEY
@@ -352,7 +354,7 @@ for i=1:n_datasets
    cov_list=[cov_list 'cov_' data_string ','];
  
    ok=find(obs>bad_val); % KEY
-   % TNT: add some codes here if we want to know which L3C SST (platform) is available?
+   % [P1][Ch2][ANDY/SCOTT/ME][Q]: add some codes here if we want to know which L3C SST (platform) is available?
    full_obs(ok)=1; % full_obs: a binary mask (1=valid obs and 0=no/bad data), overwrite every time
    % to know whether a 0.05ºx0.05º pixel had any valid observation from at least one satellite
 
@@ -361,7 +363,7 @@ end % this for loop is all for creating obs_list and cov_list and full_obs, para
    message2(['*** DEBUG019'])
 
 clear cov bias obs sst stdvals global_sst global_stdvals 
-% ANDY: global_sst and global_stdvals?
+% [P3][Oth][ANDY][Q]: global_sst and global_stdvals?
 
 
 % Determine location of MultiScale (MS) estimation software.
@@ -425,7 +427,7 @@ for i=1:length(oi_corr_parm_001) % [8, 16, 32]
    %comstring=['[anom,est_error] = mult_groupb( oi_scales, oi_density, n_fields,' ...
    comstring=['[anom,est_error] = mult_groupb_new( oi_scales, oi_density, n_fields,' ...
                  'oi_function_type, ss1, oi_corr_parm_001(i), sst_variability, oi_nweight,' ...
-                 'measurement_model, ' obs_list  cov_list ' land_mask, oi_oceans_coupling, [1 ]);'] % KEY %TNT: overcome with errors here
+                 'measurement_model, ' obs_list  cov_list ' land_mask, oi_oceans_coupling, [1 ]);'] % KEY 
    % oi_scales: array([[  8, 128,  57,  66,  66,   1,   0, 128, 100,  56,  56, -27,   1]], 
    % dtype=int16), a decomposition control vector
    % oi_density: 1
@@ -490,7 +492,7 @@ for i=1:length(oi_corr_parm_001) % [8, 16, 32]
    clear fx fy extreme
 
    message2(['*** DEBUG038'])
-   % ANDY: what are they? (anom_ and error_)
+   
    eval(['anom_' istring '=anom;'])
    eval(['error_' istring '=est_error;']) 
    clear anom est_error
@@ -508,15 +510,14 @@ init_sst_analysis=sst_analysis; % L4 SST (background/reference field: previous d
 
 message2(['*** DEBUG041'])
 
-% Create correlation map from observation map (detailed explanation in the code).
+% Create correlation map from observation map (detailed explanation in the code "get_cmap.m").
 % dense/sparse observation/data region → small/large correlation length (lmin/lmax)
 % [3600,7200]; each grid cell gets a value between lmin and lmax
 correlation_map=get_cmap(full_obs,8,32); % full_obs: a binary mask (1=valid obs and 0=no/bad data)
 clear full_obs
 
 % correlation_map: the correlation_map of yesterday line117
-% these two lines below may not need because correlation_map should be
-% already between 8 and 32? ANDY
+% [P3][Ch3][ANDY][Q]: these two lines below may not need because correlation_map should be already between 8 and 32?
 % correlation_map=min(correlation_map,32);
 % correlation_map=max(8,correlation_map);
 correlation_map=min(correlation_map,32);
@@ -537,12 +538,10 @@ message2(['*** DEBUG042'])
 % Interpolate between solutions pixel-by-pixel based on how close the local cmap 
 % value is to each fixed length–Classic weighted interpolation. Use cmap to
 % adaptively choose which OI solution to trust at each location–adaptive blending.
-% anom_analysis: interpolated anomaly map (a solution weighted toward the most 
-% appropriate correlation length), OI-estimated SST anomaly field (ªC)? ANDY KEY!
+% anom_analysis: [P1][Ch2/3][ANDY/ME][Q]: interpolated anomaly map (a solution weighted toward the most appropriate correlation length), OI-estimated SST anomaly field (ªC?
 % the correction applied to the background SST (previous day's L4 SST)
 % error_analysis:  interpolated error variance map (same as above)
-% anom/error_XXX: OI solutions/estimate computed at fixed correlation
-% lengths-correct? ANDY
+% anom/error_XXX: [P1][Ch2/3][ANDY/ME][Q]: OI solutions/estimate computed at fixed correlation lengths-correct?
 [anom_analysis, error_analysis]=corr_interp( correlation_map, ...
                                      oi_corr_parm_001(1), anom_001, error_001, ...
                                      oi_corr_parm_001(2), anom_002, error_002, ...
@@ -572,7 +571,7 @@ error_analysis(land)=bad_val;
 
 message2(['*** DEBUG044'])
 
-% analysis_smoothing_factor=4, ANDY why even number rather than odd (to get exact centre)?
+% analysis_smoothing_factor=4, [P1][Ch1][ANDY][Q]: why even number rather than odd (to get exact centre)?
 sst_analysis=smooth_analysis(unsmoothed_sst_analysis,analysis_smoothing_factor);
 good=find(~isnan(sst_analysis) & ~isnan(smooth_error_analysis));
 
