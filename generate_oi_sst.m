@@ -148,6 +148,7 @@ yesterday=day_before;
 
 % CREATE input_l3c_str (first part of obs_file; e.g., mtsat_) from the list (skip 001 ostia) 
 input_l3c_str = ''; % Momoe
+% [P1][Ch2][ME][HYP]: By this block, I can select certain input data and know which input data are used with the output filenames .mat (thinning). I thought it'd be easier for later analysis. 
 % FOR each number in the list (the list of numbers corresponding to input L3C data):
 %for i=dataset_ids % Momoe
 %   % Momoe *******
@@ -601,6 +602,7 @@ error_analysis=smooth_error_analysis;
 sst_variability(good)=sst_variability_weighting(1)*sst_variability(good) + ...
                       sst_variability_weighting(2)*abs(anom_analysis(good))+ ...
                       sqrt(error_analysis(good));
+
 
 % Modify correlation map if required.
 
