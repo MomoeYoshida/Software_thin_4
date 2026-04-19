@@ -117,7 +117,7 @@ name_coastwatch_file     = file_info.name_coastwatch_file;
 
 n_datasets               = file_info.var_n_datasets; % 10: nighttime only for CoralTemp
 % [P2][Ch2][ME][Q]: What if I reduce file_info.var_n_datasets from 10?
-%dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
+dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
 
 % Check processing direction to ensure the correct reference SST is used.
 % Normally this is set to one, and the reference day is the day previous
@@ -150,17 +150,17 @@ yesterday=day_before;
 input_l3c_str = ''; % Momoe
 % [P1][Ch2][ME][HYP]: By this block, I can select certain input data and know which input data are used with the output filenames .mat (thinning). I thought it'd be easier for later analysis. 
 % FOR each number in the list (the list of numbers corresponding to input L3C data):
-%for i=dataset_ids % Momoe
-%   % Momoe *******
-%   data_string=num2str_pad_zeros(i,3);
-%   field_name = ['name_dataset_' data_string];
-%   value = file_info.(field_name);
-%   % Extract first part before 'night_'
-%   parts = split(value, '_');
-%   prefix = parts{1};   % e.g. 'METOPB'
-%   input_l3c_str = [input_l3c_str prefix '_'];
-%   % Momoe *******
-%end
+for i=dataset_ids % Momoe
+   % Momoe *******
+   data_string=num2str_pad_zeros(i,3);
+   field_name = ['name_dataset_' data_string];
+   value = file_info.(field_name);
+   % Extract first part before 'night_'
+   parts = split(value, '_');
+   prefix = parts{1};   % e.g. 'METOPB'
+   input_l3c_str = [input_l3c_str prefix '_'];
+   % Momoe *******
+end
 
 message2(['*** DEBUG001 '])
 % Load up required data files from previous day, informing user as
@@ -227,7 +227,7 @@ cov_list='';
 % Initialize
 full_obs=zeros(spatial_resolution); %[3600,7200]
 
-% Momoe: if thinning is active.
+% Momoe: if thinning is active. no longer used...used for AGU25 in 2025
    if isfield(par_info, 'thinning') && par_info.thinning == 1
         tr_value = par_info.thinning_ratio * 100; % avoid having '.' in filename
         tr_str = sprintf('tr%d_seed%d_', round(tr_value), par_info.seed_base);
@@ -245,9 +245,9 @@ full_obs=zeros(spatial_resolution); %[3600,7200]
 % [P1][Ch1][ANDY][HYP]: 1/4 degree,  only every 5th row and column is filled with real values from sst. The other entries remain whatever they were initialized with (NaN).
 
 % FOR each number in the list (the list of numbers corresponding to input L3C data):
-%for i=dataset_ids % Momoe
+for i=dataset_ids % Momoe
 
-for i=1:n_datasets
+%for i=1:n_datasets
     % n_datasets control the # of input satellite data
    % For each input satellite data.
    data_string=num2str_pad_zeros(i,3);
