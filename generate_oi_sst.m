@@ -115,7 +115,7 @@ name_oi_state_values     = file_info.name_oi_state_values;
 name_oi_scales           = file_info.name_oi_scales;
 name_coastwatch_file     = file_info.name_coastwatch_file;
 
-n_datasets               = file_info.var_n_datasets; % 10: nighttime only for CoralTemp
+n_datasets               = file_info.var_n_datasets; % 9 
 % [P2][Ch2][ME][Q]: What if I reduce file_info.var_n_datasets from 10?
 dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
 
