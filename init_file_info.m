@@ -73,8 +73,8 @@ file_info.dir_rtg_hires         = [blended_sst_home '/Data/Rtg_hires/'];
 file_info.name_rtg_lowres        = 'rtg_sst_grb_0.5.';
 file_info.name_rtg_hires         = 'rtg_sst_grb_hr_0.083.';
 
-file_info.dir_input_ssts    = [blended_sst_home '/Input_ssts/'];
-file_info.dir_analysis      = [blended_sst_home '/Analysis/'];
+file_info.dir_input_ssts    = [blended_sst_home '/Input_ssts_thinning/'];
+file_info.dir_analysis      = [blended_sst_home '/Analysis_thinning/'];
 file_info.dir_ancillary     = [blended_sst_home '/Ancillary/'];
 file_info.dir_coastwatch    = [blended_sst_home '/Coastwatch/'];
 file_info.dir_GHRSST        = [blended_sst_home '/GHRSST/'];
