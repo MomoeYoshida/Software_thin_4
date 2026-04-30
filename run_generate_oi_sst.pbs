@@ -24,14 +24,18 @@ module purge
 module load matlab/2024a
 module load gcc/10.5.0
 
+echo "tar_date = $tar_date"
+
+echo "YEAR=$YEAR DOY=$DOY"
+
 # Run your code with useful debugging commands.
 # <<'EOF': send the following commands to MATLAB as input
-matlab -nodisplay -nosplash <<'EOF'
+matlab -nodisplay -nosplash <<EOF
 clear mex
 dbstop if error
 dbmex on
 
-generate_oi_sst(2025,012)
+generate_oi_sst($YEAR,$DOY)
 
 exit
 EOF
