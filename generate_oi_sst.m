@@ -307,7 +307,7 @@ for i=1:n_datasets
    % Thinning; spatial subsampling
    allvals=NaN*ones(spatial_resolution);
    allvals(1:thin:end,1:thin:end)=sst(1:thin:end,1:thin:end); 
-   message2(['*** Thinning: every ' thin 'th row and column is filled with real values']);
+   message2(['*** Thinning: every ' string(thin) 'th row and column is filled with real values']);
    sst=allvals;
 
    % ***20250702_MT/Andy***
