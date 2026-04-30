@@ -73,8 +73,8 @@ file_info.dir_rtg_hires         = [blended_sst_home '/Data/Rtg_hires/'];
 file_info.name_rtg_lowres        = 'rtg_sst_grb_0.5.';
 file_info.name_rtg_hires         = 'rtg_sst_grb_hr_0.083.';
 
-file_info.dir_input_ssts    = [blended_sst_home '/Input_ssts_thinning/'];
-file_info.dir_analysis      = [blended_sst_home '/Analysis_thinning/'];
+file_info.dir_input_ssts    = [blended_sst_home '/Input_ssts/'];
+file_info.dir_analysis      = [blended_sst_home '/Analysis_thin_5/']; % adjust here
 file_info.dir_ancillary     = [blended_sst_home '/Ancillary/'];
 file_info.dir_coastwatch    = [blended_sst_home '/Coastwatch/'];
 file_info.dir_GHRSST        = [blended_sst_home '/GHRSST/'];
@@ -112,12 +112,12 @@ file_info.name_bias_correlation_maps = 'bias_correlation_maps_';
 % Note that 'noaa_name' and 'metop_name' are code for 'afternoon' and 'morning' satellites
 % Also, all original NOAA satellites (16, 17, 18, 19) should be lower-case here
 %file_info.var_n_datasets = 19;
-%file_info.var_n_datasets = 10; % nighttime only, CoralTemp
+file_info.var_n_datasets = 10; % nighttime only, CoralTemp
 %file_info.var_n_datasets = [1,2,3,4,5,6,7,8,10] % Momoe % e.g., [1,2,3,4,5,6,7,8,10] remove #009 mtsat_night % this type/shape change is dangerous because MEX is not robust to that, introducing a mismatch between MATLAB passes and what MEX assumes
 % [P1]: never compute values inside this init_file_info.m!!
 % Momoe ************************************************* 
-file_info.dataset_ids = [1,2,3,4,5,6,7,8,10]; % DO NOT remote 1-ostia
-file_info.var_n_datasets = 9;
+%file_info.dataset_ids = [1,2,3,4,5,6,7,8,10]; % NEVER remove 1-ostia! 
+%file_info.var_n_datasets = 10;
 %file_info.var_n_datasets = numel(file_info.dataset_ids); % "MATLAB init_file_info.m code cannot have implicit calculations in it." in ../C_code/init_file_info.c
 % ANDY: The change here causes the segfault?
 % Momoe *************************************************

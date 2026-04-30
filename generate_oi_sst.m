@@ -115,9 +115,9 @@ name_oi_state_values     = file_info.name_oi_state_values;
 name_oi_scales           = file_info.name_oi_scales;
 name_coastwatch_file     = file_info.name_coastwatch_file;
 
-n_datasets               = file_info.var_n_datasets; % 9 
+n_datasets               = file_info.var_n_datasets; % 10 nighttime-only 
 % [P2][Ch2][ME][Q]: What if I reduce file_info.var_n_datasets from 10?
-dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
+%dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
 
 % Check processing direction to ensure the correct reference SST is used.
 % Normally this is set to one, and the reference day is the day previous
@@ -146,33 +146,33 @@ daystring=num2str_pad_zeros(day,3); %e.g., 002
 
 yesterday=day_before;
 
-% CREATE input_l3c_str (first part of obs_file; e.g., mtsat_) from the list (skip 001 ostia) 
-input_l3c_str = ''; % Momoe
-% [P1][Ch2][ME][HYP]: By this block, I can select certain input data and know which input data are used with the output filenames .mat (thinning). I thought it'd be easier for later analysis. 
-% FOR each number in the list (the list of numbers corresponding to input L3C data):
-for i=dataset_ids % Momoe
-   % Momoe *******
-   data_string=num2str_pad_zeros(i,3);
-   field_name = ['name_dataset_' data_string];
-   value = file_info.(field_name);
-   % Extract first part before 'night_'
-   parts = split(value, '_');
-   prefix = parts{1};   % e.g. 'METOPB'
-   input_l3c_str = [input_l3c_str prefix '_'];
-   % Momoe *******
-end
-
+%% CREATE input_l3c_str (first part of obs_file; e.g., mtsat_) from the list (skip 001 ostia) 
+%input_l3c_str = ''; % Momoe
+%% [P1][Ch2][ME][HYP]: By this block, I can select certain input data and know which input data are used with the output filenames .mat (thinning). I thought it'd be easier for later analysis. 
+%% FOR each number in the list (the list of numbers corresponding to input L3C data):
+%for i=dataset_ids % Momoe
+%   % Momoe *******
+%   data_string=num2str_pad_zeros(i,3);
+%   field_name = ['name_dataset_' data_string];
+%   value = file_info.(field_name);
+%   % Extract first part before 'night_'
+%   parts = split(value, '_');
+%   prefix = parts{1};   % e.g. 'METOPB'
+%   input_l3c_str = [input_l3c_str prefix '_'];
+%   % Momoe *******
+%end
+%
 message2(['*** DEBUG001 '])
 % Load up required data files from previous day, informing user as
 % files are loaded.
 
 message2(['*** Loading up data from previous day: ' yesterday])
 
-eval(['load ' dir_analysis file_info.name_sst_analysis input_l3c_str yesterday ' sst_analysis']);
-message2(['*** Loading ' dir_analysis name_sst_analysis input_l3c_str yesterday])
+eval(['load ' dir_analysis file_info.name_sst_analysis yesterday ' sst_analysis']);
+message2(['*** Loading ' dir_analysis name_sst_analysis yesterday])
 
-eval(['load ' dir_analysis file_info.name_sst_variability input_l3c_str yesterday ' sst_variability']);
-message2(['*** Loading ' dir_analysis name_sst_variability input_l3c_str yesterday]);
+eval(['load ' dir_analysis file_info.name_sst_variability yesterday ' sst_variability']);
+message2(['*** Loading ' dir_analysis name_sst_variability yesterday]);
 
 %eval(['load ' dir_analysis file_info.name_correlation_map input_l3c_str yesterday ' correlation_map']);
 %message2(['*** Loading ' dir_analysis name_correlation_map input_l3c_str yesterday ]);
@@ -245,9 +245,9 @@ full_obs=zeros(spatial_resolution); %[3600,7200]
 % [P1][Ch1][ANDY][HYP]: 1/4 degree,  only every 5th row and column is filled with real values from sst. The other entries remain whatever they were initialized with (NaN).
 
 % FOR each number in the list (the list of numbers corresponding to input L3C data):
-for i=dataset_ids % Momoe
+%for i=dataset_ids % Momoe
 
-%for i=1:n_datasets
+for i=1:n_datasets
     % n_datasets control the # of input satellite data
    % For each input satellite data.
    data_string=num2str_pad_zeros(i,3);
@@ -626,11 +626,11 @@ message2(['*** DEBUG050'])
 
 message2(['*** Writing results to ' dir_analysis])
 
-eval(['save ' dir_analysis name_sst_analysis tr_str input_l3c_str date_string ' *sst_analysis file_info']); % save any variable ending in sst_analysis and file_info, CoralTemp
-eval(['save ' dir_analysis name_error_analysis tr_str input_l3c_str date_string ' error_analysis']);
-eval(['save ' dir_analysis name_sst_variability tr_str input_l3c_str date_string ' sst_variability']);
+eval(['save ' dir_analysis name_sst_analysis tr_str date_string ' *sst_analysis file_info']); % save any variable ending in sst_analysis and file_info, CoralTemp
+eval(['save ' dir_analysis name_error_analysis tr_str date_string ' error_analysis']);
+eval(['save ' dir_analysis name_sst_variability tr_str date_string ' sst_variability']);
 % eval(['save ' dir_analysis name_correlation_map tr_str date_string ' correlation_map' ]); % yesterday's
-eval(['save ' dir_analysis name_correlation_map tr_str input_l3c_str date_string ' correlation_map' ]); % today's
+eval(['save ' dir_analysis name_correlation_map tr_str date_string ' correlation_map' ]); % today's
 
 message2(['*** DEBUG060'])
 
