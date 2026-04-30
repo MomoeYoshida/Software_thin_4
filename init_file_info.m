@@ -116,7 +116,7 @@ file_info.name_bias_correlation_maps = 'bias_correlation_maps_';
 %file_info.var_n_datasets = [1,2,3,4,5,6,7,8,10] % Momoe % e.g., [1,2,3,4,5,6,7,8,10] remove #009 mtsat_night % this type/shape change is dangerous because MEX is not robust to that, introducing a mismatch between MATLAB passes and what MEX assumes
 % [P1]: never compute values inside this init_file_info.m!!
 % Momoe ************************************************* 
-file_info.dataset_ids = [1,2,3,4,5,6,7,8,10];
+file_info.dataset_ids = [1,2,3,4,5,6,7,8,10]; % DO NOT remote 1-ostia
 file_info.var_n_datasets = 9;
 %file_info.var_n_datasets = numel(file_info.dataset_ids); % "MATLAB init_file_info.m code cannot have implicit calculations in it." in ../C_code/init_file_info.c
 % ANDY: The change here causes the segfault?
