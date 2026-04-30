@@ -116,6 +116,7 @@ name_oi_scales           = file_info.name_oi_scales;
 name_coastwatch_file     = file_info.name_coastwatch_file;
 
 n_datasets               = file_info.var_n_datasets; % 10 nighttime-only 
+thin                     = file_info.thin_n_pixels; % e.g., 5 for 96% removal
 % [P2][Ch2][ME][Q]: What if I reduce file_info.var_n_datasets from 10?
 %dataset_ids              = file_info.dataset_ids; % [1,2,3,4,5,6,7,8,10]
 
@@ -302,7 +303,12 @@ for i=1:n_datasets
    end
    clear gridcount only_one only_two
    %pack         % old command that is now deprecated
-   
+  
+   % Thinning; spatial subsampling
+   allvals=NaN*ones(spatial_resolution);
+   allvals(1:thin:end,1:thin:end)=sst(1:thin:end,1:thin:end); 
+   message2(['*** Thinning: every ' thin 'th row and column is filled with real values']);
+   sst=allvals;
 
    % ***20250702_MT/Andy***
    % An analysis system analyses anomalies. The difference between
