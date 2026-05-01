@@ -29,9 +29,12 @@ x = summap;
 p = summap;
 
 for i=1:3:length(varargin),
+  % Compute a weight based on how similar oi_corr_parm_001(1)(i.e., 8; fixed correlation length) is to cmap.
+  % more similar >>> higher weight
   curmap = 1./((abs(log(cmap ./ varargin{i}))).^1.4);
   curmap(find(curmap>1e6)) = 1e6;
 
+  % Apply the weight to anom and error.
   x = x + curmap .* varargin{i+1};
   p = p + curmap .* varargin{i+2};
   summap = summap + curmap;
