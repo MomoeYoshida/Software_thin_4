@@ -595,10 +595,9 @@ sst_analysis=max(sst_analysis, sst_analysis_min);
 sst_analysis(bad)=bad_val;
 
 
-% Set negative error values to bad value.
-
-smooth_error_analysis(find(smooth_error_analysis<0))=error_val_max;
-smooth_error_analysis=sqrt(smooth_error_analysis);
+% [P1][Ch1][ANDY][Q]: -ve smooth_error_analysis values possible? why set to 1?
+smooth_error_analysis(find(smooth_error_analysis<0))=error_val_max; %1
+smooth_error_analysis=sqrt(smooth_error_analysis); % [P1][Ch1][ANDY][Q]: convert variance to standard deviation?
 smooth_error_analysis(isnan(smooth_error_analysis))=bad_val;
 
 message2(['*** DEBUG050'])
@@ -609,7 +608,7 @@ error_analysis=smooth_error_analysis;
 % 0.8*yesterday's variability + 0.2*today's anom + today's analysis error
 sst_variability(good)=sst_variability_weighting(1)*sst_variability(good) + ...
                       sst_variability_weighting(2)*abs(anom_analysis(good))+ ...
-                      sqrt(error_analysis(good));
+                      sqrt(error_analysis(good)); % [P1][Ch1][ANDY][Q]: sqrt of standard deviation?
 
 
 % Modify correlation map if required.
